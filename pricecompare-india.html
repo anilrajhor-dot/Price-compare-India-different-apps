@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PriceCompare India — Search once. Compare everywhere.</title>
+<style>
+  :root{
+    --brand:#0f62fe; --brand-dark:#0043ce; --ink:#0f172a; --ink-soft:#475569;
+    --bg:#f4f6fb; --card:#ffffff; --border:#e2e8f0; --green:#16a34a; --amber:#d97706;
+    --red:#dc2626; --blue:#2563eb; --grey:#94a3b8; --radius:14px;
+    --shadow:0 1px 2px rgba(15,23,42,.06), 0 8px 24px rgba(15,23,42,.06);
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);}
+  header{position:sticky;top:0;z-index:50;background:linear-gradient(135deg,var(--brand),var(--brand-dark));color:#fff;padding:14px 16px 10px;}
+  .header-top{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+  .brand{display:flex;flex-direction:column;}
+  .brand h1{margin:0;font-size:19px;font-weight:800;letter-spacing:.2px;}
+  .brand .tagline{font-size:11.5px;opacity:.9;margin-top:1px;}
+  nav.tabs{display:flex;gap:4px;overflow-x:auto;margin-top:12px;padding-bottom:2px;-webkit-overflow-scrolling:touch;}
+  nav.tabs button{flex:0 0 auto;background:rgba(255,255,255,.14);border:none;color:#fff;padding:7px 12px;border-radius:999px;font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap;}
+  nav.tabs button.active{background:#fff;color:var(--brand-dark);}
+  main{max-width:1080px;margin:0 auto;padding:16px 14px 90px;}
+  .searchwrap{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px;margin-bottom:16px;}
+  .searchrow{display:flex;gap:8px;}
+  .searchrow input[type=text]{flex:1;padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:15px;}
+  .searchrow input[type=text]:focus{outline:none;border-color:var(--brand);}
+  .btn{border:none;border-radius:10px;padding:11px 14px;font-size:13.5px;font-weight:600;cursor:pointer;}
+  .btn-primary{background:var(--brand);color:#fff;}
+  .btn-primary:hover{background:var(--brand-dark);}
+  .actionrow{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
+  .chip-btn{background:#eef2ff;color:var(--brand-dark);border:1px solid #dbe4ff;border-radius:999px;padding:8px 12px;font-size:12.5px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;}
+  .chip-btn:hover{background:#e0e9ff;}
+  h2.section-title{font-size:15px;margin:22px 0 10px;color:var(--ink);}
+  .popular-tags{display:flex;flex-wrap:wrap;gap:8px;}
+  .tag{background:#fff;border:1px solid var(--border);padding:6px 11px;border-radius:999px;font-size:12.5px;cursor:pointer;}
+  .tag:hover{border-color:var(--brand);color:var(--brand);}
+  .steps{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+  .step{background:var(--card);border-radius:12px;padding:12px;box-shadow:var(--shadow);}
+  .step .n{width:24px;height:24px;border-radius:50%;background:var(--brand);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-bottom:6px;}
+  .step h3{margin:0 0 3px;font-size:13px;}
+  .step p{margin:0;font-size:12px;color:var(--ink-soft);}
+
+  .lowest-banner{background:linear-gradient(135deg,#0f9d58,#0a7d45);color:#fff;border-radius:var(--radius);padding:16px;margin-bottom:14px;box-shadow:var(--shadow);}
+  .lowest-banner .lbl{font-size:11.5px;letter-spacing:.5px;opacity:.9;font-weight:700;text-transform:uppercase;}
+  .lowest-banner .price{font-size:30px;font-weight:800;margin:4px 0;}
+  .lowest-banner .meta{font-size:12.5px;opacity:.95;}
+  .badge-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;}
+  .fact-badge{background:rgba(255,255,255,.18);border-radius:8px;padding:5px 9px;font-size:11px;font-weight:600;}
+
+  .toolbar{display:flex;gap:8px;overflow-x:auto;margin-bottom:12px;padding-bottom:2px;}
+  select.filter-select{padding:8px 10px;border-radius:8px;border:1px solid var(--border);font-size:12.5px;background:#fff;}
+
+  .match-tabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;}
+  .match-tabs button{border:1px solid var(--border);background:#fff;border-radius:999px;padding:6px 11px;font-size:11.5px;font-weight:600;cursor:pointer;color:var(--ink-soft);}
+  .match-tabs button.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+
+  .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:13px;margin-bottom:11px;}
+  .card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+  .store-pill{display:inline-flex;align-items:center;gap:6px;font-weight:700;font-size:13px;}
+  .dot{width:9px;height:9px;border-radius:50%;flex:0 0 auto;}
+  .status-badge{font-size:10.5px;font-weight:700;padding:3px 7px;border-radius:6px;}
+  .status-live{background:#dcfce7;color:var(--green);}
+  .status-affiliate{background:#dbeafe;color:var(--blue);}
+  .status-demo{background:#fef3c7;color:var(--amber);}
+  .status-unavailable{background:#f1f5f9;color:var(--grey);}
+  .match-badge{font-size:10.5px;font-weight:700;padding:3px 7px;border-radius:6px;background:#ede9fe;color:#6d28d9;}
+  .prod-title{font-size:13.5px;font-weight:600;margin:8px 0 2px;color:var(--ink);}
+  .price-line{display:flex;align-items:baseline;gap:8px;margin-top:6px;}
+  .eff-price{font-size:20px;font-weight:800;}
+  .strike{color:var(--grey);text-decoration:line-through;font-size:12.5px;}
+  .save-pct{color:var(--green);font-size:12px;font-weight:700;}
+  .detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;margin-top:9px;font-size:11.5px;color:var(--ink-soft);}
+  .detail-grid b{color:var(--ink);font-weight:600;}
+  .card-actions{display:flex;gap:8px;margin-top:11px;}
+  .btn-outline{background:#fff;border:1.4px solid var(--border);border-radius:8px;padding:8px 11px;font-size:12px;font-weight:600;cursor:pointer;}
+  .btn-outline:hover{border-color:var(--brand);color:var(--brand);}
+  .btn-small-primary{background:var(--brand);color:#fff;border:none;border-radius:8px;padding:8px 12px;font-size:12px;font-weight:700;cursor:pointer;flex:1;text-align:center;text-decoration:none;}
+  .updated-ts{font-size:10.5px;color:var(--grey);margin-top:8px;}
+  .demo-flag{font-size:10.5px;color:var(--amber);font-weight:700;margin-top:2px;}
+
+  table.compare-table{width:100%;border-collapse:collapse;background:#fff;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);}
+  table.compare-table th,table.compare-table td{padding:10px;font-size:12.5px;text-align:left;border-bottom:1px solid var(--border);}
+  table.compare-table th{background:#f8fafc;font-size:11px;text-transform:uppercase;letter-spacing:.4px;color:var(--ink-soft);}
+
+  .empty-state{background:#fff;border-radius:var(--radius);padding:30px 16px;text-align:center;color:var(--ink-soft);box-shadow:var(--shadow);}
+  .empty-state .big{font-size:34px;margin-bottom:6px;}
+
+  .admin-table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:var(--shadow);}
+  .admin-table th,.admin-table td{padding:9px 10px;font-size:12px;border-bottom:1px solid var(--border);text-align:left;}
+  .admin-table th{background:#f8fafc;font-size:10.5px;text-transform:uppercase;color:var(--ink-soft);}
+  .scroll-x{overflow-x:auto;}
+
+  .config-card{background:#fff;border-radius:12px;box-shadow:var(--shadow);padding:13px;margin-bottom:10px;}
+  .config-head{display:flex;justify-content:space-between;align-items:center;}
+  .config-head .name{font-weight:700;font-size:13.5px;display:flex;align-items:center;gap:8px;}
+  .config-fields{display:none;grid-template-columns:1fr;gap:7px;margin-top:10px;}
+  .config-fields.open{display:grid;}
+  .config-fields label{font-size:11px;color:var(--ink-soft);display:block;margin-bottom:3px;}
+  .config-fields input{width:100%;padding:8px 9px;border:1px solid var(--border);border-radius:7px;font-size:12.5px;font-family:monospace;}
+  .toggle-link{font-size:11.5px;color:var(--brand);font-weight:600;cursor:pointer;}
+  .switch{position:relative;width:38px;height:21px;flex:0 0 auto;}
+  .switch input{opacity:0;width:0;height:0;}
+  .slider{position:absolute;inset:0;background:#cbd5e1;border-radius:999px;cursor:pointer;transition:.2s;}
+  .slider:before{content:"";position:absolute;width:16px;height:16px;left:2.5px;top:2.5px;background:#fff;border-radius:50%;transition:.2s;}
+  input:checked + .slider{background:var(--brand);}
+  input:checked + .slider:before{transform:translateX(17px);}
+  .config-meta{display:grid;grid-template-columns:1fr 1fr;gap:4px 10px;margin-top:8px;font-size:11px;color:var(--ink-soft);}
+
+  .guide-card{background:#fff;border-radius:12px;box-shadow:var(--shadow);padding:13px;margin-bottom:10px;}
+  .guide-card h3{margin:0 0 6px;font-size:14px;}
+  .guide-row{display:flex;justify-content:space-between;font-size:11.5px;padding:4px 0;border-bottom:1px dashed var(--border);color:var(--ink-soft);}
+  .guide-row b{color:var(--ink);font-weight:600;}
+  .guide-row a{color:var(--brand);text-decoration:none;}
+
+  .watch-item{background:#fff;border-radius:12px;box-shadow:var(--shadow);padding:12px;margin-bottom:10px;}
+  .watch-top{display:flex;justify-content:space-between;align-items:center;}
+  .watch-top .pt{font-size:13px;font-weight:600;}
+  .diff-pos{color:var(--green);font-weight:700;font-size:12px;}
+  .diff-neg{color:var(--red);font-weight:700;font-size:12px;}
+
+  .modal-backdrop{position:fixed;inset:0;background:rgba(15,23,42,.5);display:none;align-items:flex-end;z-index:100;}
+  .modal-backdrop.open{display:flex;}
+  .modal{background:#fff;border-radius:16px 16px 0 0;padding:18px;width:100%;max-height:85vh;overflow-y:auto;}
+  .modal h3{margin-top:0;}
+  .modal label{font-size:12px;color:var(--ink-soft);display:block;margin:9px 0 4px;}
+  .modal input,.modal select{width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-size:14px;}
+  .modal-close{float:right;background:none;border:none;font-size:20px;cursor:pointer;color:var(--ink-soft);}
+
+  .history-range{display:flex;gap:6px;margin:8px 0;}
+  .history-range button{border:1px solid var(--border);background:#fff;border-radius:7px;padding:5px 10px;font-size:11.5px;cursor:pointer;}
+  .history-range button.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+  svg.spark{width:100%;height:90px;}
+
+  footer{text-align:center;font-size:11px;color:var(--ink-soft);padding:20px 16px 30px;}
+  .toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:999px;font-size:12.5px;font-weight:600;z-index:200;display:none;box-shadow:0 8px 24px rgba(0,0,0,.25);}
+  .toast.show{display:block;}
+  .note{font-size:11px;color:var(--ink-soft);background:#f8fafc;border:1px dashed var(--border);border-radius:8px;padding:8px 10px;margin:8px 0;}
+  .legend-row{display:flex;flex-wrap:wrap;gap:10px;font-size:11px;color:var(--ink-soft);margin-bottom:10px;}
+  .legend-row span{display:flex;align-items:center;gap:5px;}
+
+  @media(min-width:760px){
+    .steps{grid-template-columns:repeat(4,1fr);}
+    .cards-grid{display:none;}
+  }
+  @media(max-width:759px){
+    .desktop-table{display:none;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <div class="brand">
+      <h1>PriceCompare India</h1>
+      <div class="tagline">Search once. Compare everywhere.</div>
+    </div>
+  </div>
+  <nav class="tabs" id="tabNav">
+    <button data-tab="home" class="active">Home</button>
+    <button data-tab="results">Compare</button>
+    <button data-tab="watchlist">Watchlist</button>
+    <button data-tab="admin">Admin</button>
+    <button data-tab="apiconfig">API Setup</button>
+    <button data-tab="guide">Integration Guide</button>
+  </nav>
+</header>
+
+<main>
+
+  <!-- ===================== HOME ===================== -->
+  <section id="tab-home">
+    <div class="searchwrap">
+      <div class="searchrow">
+        <input type="text" id="searchInput" placeholder="🔍 Search product, brand, model or barcode">
+        <button class="btn btn-primary" id="btnSearch">Search</button>
+      </div>
+      <div class="actionrow">
+        <button class="chip-btn" id="btnScan">📷 Scan Barcode</button>
+        <button class="chip-btn" id="btnPasteUrl">🔗 Paste Product URL</button>
+        <button class="chip-btn" id="btnVoice">🎙️ Voice Search</button>
+      </div>
+    </div>
+
+    <h2 class="section-title">Popular Searches</h2>
+    <div class="popular-tags" id="popularTags"></div>
+
+    <h2 class="section-title">Recently Compared</h2>
+    <div class="popular-tags" id="recentTags"><span style="font-size:12px;color:var(--ink-soft);">Nothing compared yet this session.</span></div>
+
+    <h2 class="section-title">How it works</h2>
+    <div class="steps">
+      <div class="step"><div class="n">1</div><h3>Search</h3><p>Find your product by name, model, barcode or a pasted link.</p></div>
+      <div class="step"><div class="n">2</div><h3>Match</h3><p>We identify the same product across connected stores.</p></div>
+      <div class="step"><div class="n">3</div><h3>Compare</h3><p>See actual available prices and charges, side by side.</p></div>
+      <div class="step"><div class="n">4</div><h3>Buy</h3><p>Open the selected store's product page to complete purchase.</p></div>
+    </div>
+  </section>
+
+  <!-- ===================== RESULTS ===================== -->
+  <section id="tab-results" style="display:none;">
+    <div id="resultsInner"></div>
+  </section>
+
+  <!-- ===================== WATCHLIST ===================== -->
+  <section id="tab-watchlist" style="display:none;">
+    <h2 class="section-title" style="margin-top:0;">Watchlist &amp; Price Alerts</h2>
+    <div id="watchlistInner"></div>
+  </section>
+
+  <!-- ===================== ADMIN ===================== -->
+  <section id="tab-admin" style="display:none;">
+    <h2 class="section-title" style="margin-top:0;">Connected Stores</h2>
+    <div class="legend-row">
+      <span>🟢 Live API</span><span>🔵 Affiliate feed</span><span>🟡 Demo data</span><span>⚪ Not connected</span>
+    </div>
+    <div class="scroll-x"><table class="admin-table" id="adminTable"></table></div>
+    <h2 class="section-title">Summary</h2>
+    <div id="adminSummary" class="note"></div>
+  </section>
+
+  <!-- ===================== API CONFIG ===================== -->
+  <section id="tab-apiconfig" style="display:none;">
+    <h2 class="section-title" style="margin-top:0;">API &amp; Data Sources</h2>
+    <div class="note">Prototype only. Keys entered here are stored in this browser's local storage for demo purposes and are never sent anywhere. In production, secrets must live server-side behind an API gateway — never in frontend code.</div>
+    <div id="apiConfigInner"></div>
+  </section>
+
+  <!-- ===================== INTEGRATION GUIDE ===================== -->
+  <section id="tab-guide" style="display:none;">
+    <h2 class="section-title" style="margin-top:0;">Live API Integration Guide</h2>
+    <div class="note">This app runs entirely on demo data until real credentials are supplied. Claims about a provider's pricing terms should be re-verified against its current official documentation before going live.</div>
+    <div id="guideInner"></div>
+  </section>
+
+</main>
+
+<div class="modal-backdrop" id="alertModalBackdrop">
+  <div class="modal">
+    <button class="modal-close" id="alertModalClose">×</button>
+    <h3>Set Price Alert</h3>
+    <p style="font-size:12.5px;color:var(--ink-soft);" id="alertModalProduct"></p>
+    <label>Notify me when the effective price falls below (₹)</label>
+    <input type="number" id="alertTargetPrice">
+    <label>Notify via</label>
+    <select id="alertChannel">
+      <option value="email">Email (requires setup)</option>
+      <option value="push">Push notification (requires setup)</option>
+      <option value="whatsapp">WhatsApp (requires setup)</option>
+      <option value="inapp" selected>In-app only (works now)</option>
+    </select>
+    <div class="note">Email / push / WhatsApp delivery needs a configured notification service — see API Setup. In this prototype, alerts are checked in-app only.</div>
+    <button class="btn btn-primary" style="width:100%;margin-top:12px;" id="alertModalSave">Save Alert</button>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="urlModalBackdrop">
+  <div class="modal">
+    <button class="modal-close" id="urlModalClose">×</button>
+    <h3>Paste Product URL</h3>
+    <label>Product page link</label>
+    <input type="text" id="urlInput" placeholder="https://www.amazon.in/...">
+    <button class="btn btn-primary" style="width:100%;margin-top:12px;" id="urlModalGo">Find this product</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<footer>
+  PriceCompare India — front-end prototype. All prices marked DEMO DATA are illustrative and not live.<br>
+  Developed by Anil Sharma, Former General Manager, Central Bank of India.
+</footer>
+
+<script>
+(function(){
+"use strict";
+
+/* =========================================================================
+   0. SEEDED RANDOM (deterministic demo data across reloads)
+   ========================================================================= */
+function hashStr(s){let h=1779033703^s.length;for(let i=0;i<s.length;i++){h=Math.imul(h^s.charCodeAt(i),3432918353);h=h<<13|h>>>19;}return function(){h=Math.imul(h^h>>>16,2246822507);h=Math.imul(h^h>>>13,3266489909);h^=h>>>16;return (h>>>0)/4294967296;};}
+function rand(seedStr,min,max){const r=hashStr(seedStr)();return min+r*(max-min);}
+
+/* =========================================================================
+   1. STORE REGISTRY  (connector metadata — matches STORE_CONNECTOR interface)
+   ========================================================================= */
+const STORES = [
+  {id:'amazon',    name:'Amazon India',      tier:'priority', color:'#FF9900',
+    apiName:'Amazon Product Advertising / Creators API (via Associates Program)',
+    docs:'https://webservices.amazon.in/paapi5/documentation/',
+    accessType:'Affiliate — free, subject to eligibility (min. qualifying sales)',
+    creds:[{k:'accessKey',l:'Access Key'},{k:'secretKey',l:'Secret Key'},{k:'associateTag',l:'Associate / Partner Tag'},{k:'marketplace',l:'Marketplace (webservices.amazon.in)'}],
+    envVars:['AMAZON_PAAPI_ACCESS_KEY','AMAZON_PAAPI_SECRET_KEY','AMAZON_ASSOCIATE_TAG'],
+    rateLimit:'Starts at 1 request/sec (TPS scales with sales performance)',
+    functions:'searchProducts, getProduct, getPrice, getOffers, getAvailability, getProductUrl'},
+  {id:'flipkart',  name:'Flipkart',          tier:'priority', color:'#2874F0',
+    apiName:'Flipkart Affiliate API',
+    docs:'https://affiliate.flipkart.com/api-docs/fkaffiliate.html',
+    accessType:'Affiliate — free, requires approved affiliate account',
+    creds:[{k:'affiliateId',l:'Affiliate ID'},{k:'token',l:'Fk-Affiliate-Token'}],
+    envVars:['FLIPKART_AFFILIATE_ID','FLIPKART_AFFILIATE_TOKEN'],
+    rateLimit:'Per affiliate account tier (see dashboard after approval)',
+    functions:'searchProducts, getProduct, getPrice, getOffers, getAvailability, getProductUrl'},
+  {id:'ebay',      name:'eBay',              tier:'priority', color:'#E53238',
+    apiName:'eBay Browse API (Developer Program)',
+    docs:'https://developer.ebay.com/develop/apis/restful-apis/browse-api',
+    accessType:'Free developer tier (OAuth application token)',
+    creds:[{k:'clientId',l:'Client ID'},{k:'clientSecret',l:'Client Secret'}],
+    envVars:['EBAY_CLIENT_ID','EBAY_CLIENT_SECRET'],
+    rateLimit:'5,000 calls/day on default free tier (per eBay developer terms)',
+    functions:'searchProducts, getProduct, getPrice, getAvailability, getSeller, getProductUrl'},
+  {id:'jiomart',   name:'JioMart',           tier:'other', color:'#0B5FA5',
+    apiName:'No public affiliate/API program identified',
+    docs:'https://www.jiomart.com/', accessType:'Not published — contact JioMart partnerships',
+    creds:[{k:'apiKey',l:'API Key'},{k:'endpoint',l:'API Endpoint'}], envVars:['JIOMART_API_KEY','JIOMART_ENDPOINT'],
+    rateLimit:'Unknown', functions:'Connector stubbed — awaiting authorised feed'},
+  {id:'tataneu',   name:'Tata Neu / Tata CLiQ', tier:'other', color:'#E31837',
+    apiName:'No public affiliate/API program identified',
+    docs:'https://www.tatacliq.com/', accessType:'Not published — contact Tata Digital partnerships',
+    creds:[{k:'apiKey',l:'API Key'},{k:'endpoint',l:'API Endpoint'}], envVars:['TATACLIQ_API_KEY','TATACLIQ_ENDPOINT'],
+    rateLimit:'Unknown', functions:'Connector stubbed — awaiting authorised feed'},
+  {id:'myntra',    name:'Myntra',            tier:'other', color:'#FF3F6C',
+    apiName:'No public affiliate/API program identified',
+    docs:'https://www.myntra.com/', accessType:'Not published — contact Myntra partnerships',
+    creds:[{k:'apiKey',l:'API Key'},{k:'endpoint',l:'API Endpoint'}], envVars:['MYNTRA_API_KEY','MYNTRA_ENDPOINT'],
+    rateLimit:'Unknown', functions:'Connector stubbed — awaiting authorised feed'},
+  {id:'meesho',    name:'Meesho',            tier:'other', color:'#9F2089',
+    apiName:'No public affiliate/API program identified',
+    docs:'https://www.meesho.com/', accessType:'Not published',
+    creds:[{k:'apiKey',l:'API Key'},{k:'endpoint',l:'API Endpoint'}], envVars:['MEESHO_API_KEY','MEESHO_ENDPOINT'],
+    rateLimit:'Unknown', functions:'Connector stubbed — awaiting authorised feed'},
+  {id:'croma',     name:'Croma',             tier:'other', color:'#00A0DC',
+    apiName:'No public affiliate/API program identified',
+    docs:'https://www.croma.com/', accessType:'Not published',
+    creds:[{k:'apiKey',l:'API Key'},{k:'endpoint',l:'API Endpoint'}], envVars:['CROMA_API_KEY','CROMA_ENDPOINT'],
+    rateLimit:'Unknown', functions:'Connector stubbed — awaiting authorised feed'},
+  {id:'reliance',  name:'Reliance Digital',  tier:'other', color:'#E4002B',
+    apiName:'No public affiliate/API program identified',
+    docs:'https://www.reliancedigital.in/', accessType:'Not published',
+    creds:[{k:'apiKey',l:'API Key'},{k:'endpoint',l:'API Endpoint'}], envVars:['RELIANCE_DIGITAL_API_KEY','RELIANCE_DIGITAL_ENDPOINT'],
+    rateLimit:'Unknown', functions:'Connector stubbed — awaiting authorised feed'},
+  {id:'vijaysales',name:'Vijay Sales',       tier:'other', color:'#004C97',
+    apiName:'No public affiliate/API program identified',
+    docs:'https://www.vijaysales.com/', accessType:'Not published',
+    creds:[{k:'apiKey',l:'API Key'},{k:'endpoint',l:'API Endpoint'}], envVars:['VIJAYSALES_API_KEY','VIJAYSALES_ENDPOINT'],
+    rateLimit:'Unknown', functions:'Connector stubbed — awaiting authorised feed'},
+  {id:'ajio',      name:'AJIO',              tier:'other', color:'#2B2B2B',
+    apiName:'No public affiliate/API program identified',
+    docs:'https://www.ajio.com/', accessType:'Not published',
+    creds:[{k:'apiKey',l:'API Key'},{k:'endpoint',l:'API Endpoint'}], envVars:['AJIO_API_KEY','AJIO_ENDPOINT'],
+    rateLimit:'Unknown', functions:'Connector stubbed — awaiting authorised feed'},
+  {id:'nykaa',     name:'Nykaa',             tier:'other', color:'#FC2779',
+    apiName:'No public affiliate/API program identified',
+    docs:'https://www.nykaa.com/', accessType:'Not published',
+    creds:[{k:'apiKey',l:'API Key'},{k:'endpoint',l:'API Endpoint'}], envVars:['NYKAA_API_KEY','NYKAA_ENDPOINT'],
+    rateLimit:'Unknown', functions:'Connector stubbed — awaiting authorised feed'},
+  {id:'blinkit',   name:'Blinkit',           tier:'other', color:'#F8CB46',
+    apiName:'No public affiliate/API program identified',
+    docs:'https://blinkit.com/', accessType:'Not published',
+    creds:[{k:'apiKey',l:'API Key'},{k:'endpoint',l:'API Endpoint'}], envVars:['BLINKIT_API_KEY','BLINKIT_ENDPOINT'],
+    rateLimit:'Unknown', functions:'Connector stubbed — awaiting authorised feed'},
+  {id:'zepto',     name:'Zepto',             tier:'other', color:'#8A2BE2',
+    apiName:'No public affiliate/API program identified',
+    docs:'https://www.zeptonow.com/', accessType:'Not published',
+    creds:[{k:'apiKey',l:'API Key'},{k:'endpoint',l:'API Endpoint'}], envVars:['ZEPTO_API_KEY','ZEPTO_ENDPOINT'],
+    rateLimit:'Unknown', functions:'Connector stubbed — awaiting authorised feed'},
+  {id:'instamart', name:'Swiggy Instamart',  tier:'other', color:'#FC8019',
+    apiName:'No public affiliate/API program identified',
+    docs:'https://www.swiggy.com/instamart', accessType:'Not published',
+    creds:[{k:'apiKey',l:'API Key'},{k:'endpoint',l:'API Endpoint'}], envVars:['INSTAMART_API_KEY','INSTAMART_ENDPOINT'],
+    rateLimit:'Unknown', functions:'Connector stubbed — awaiting authorised feed'},
+];
+const storeById = Object.fromEntries(STORES.map(s=>[s.id,s]));
+
+/* =========================================================================
+   2. STORE CONNECTOR INTERFACE
+      Every connector exposes the same shape. The comparison engine only
+      ever talks to this interface, never to a store directly — new stores
+      plug in without touching the engine.
+   ========================================================================= */
+class StoreConnector{
+  constructor(meta){ this.meta = meta; this.config = loadConfig(meta.id); }
+  isConfigured(){
+    return this.meta.tier==='priority' && this.meta.creds.every(c=>!!(this.config && this.config[c.k]));
+  }
+  connectorStatus(){
+    if(this.isConfigured()) return this.meta.tier==='priority' ? 'live' : 'affiliate';
+    if(this.meta.tier==='priority') return 'framework-ready';
+    return 'not-connected';
+  }
+  async searchProducts(query){ return DEMO_CATALOGUE.filter(p=>p.stores.includes(this.meta.id) && matchesQuery(p,query)); }
+  async getProduct(productId){ return DEMO_CATALOGUE.find(p=>p.id===productId); }
+  getPrice(product){ return buildListing(product, this.meta.id).price; }
+  getOffers(product){ return buildListing(product, this.meta.id); }
+  getAvailability(product){ return buildListing(product, this.meta.id).availability; }
+  getDelivery(product){ return buildListing(product, this.meta.id); }
+  getSeller(product){ return buildListing(product, this.meta.id).seller; }
+  getProductUrl(product){ return buildListing(product, this.meta.id).url; }
+  getLastUpdated(){ return new Date().toISOString(); }
+  dataStatusForListing(){
+    // No connector currently holds real credentials in this prototype -> demo fallback everywhere (Priority 5 rule).
+    return this.isConfigured() ? (this.meta.tier==='priority'?'live':'affiliate') : 'demo';
+  }
+}
+const CONNECTORS = Object.fromEntries(STORES.map(s=>[s.id, new StoreConnector(s)]));
+
+/* =========================================================================
+   3. DEMO CATALOGUE
+   ========================================================================= */
+const DEMO_CATALOGUE = [
+  {id:'p1',category:'Electronics',name:'Samsung Galaxy S24 5G',brand:'Samsung',model:'Galaxy S24',variant:'256GB · Onyx Black',specs:{RAM:'8GB',Storage:'256GB',Colour:'Onyx Black'},basePrice:64999,rating:4.4,reviews:5210,stores:['amazon','flipkart','croma','reliance','vijaysales','tataneu']},
+  {id:'p2',category:'Electronics',name:'Apple iPhone 15',brand:'Apple',model:'iPhone 15',variant:'128GB · Blue',specs:{Storage:'128GB',Colour:'Blue'},basePrice:69999,rating:4.6,reviews:9871,stores:['amazon','flipkart','croma','reliance','vijaysales','tataneu','ebay']},
+  {id:'p3',category:'Electronics',name:'Dell Inspiron 15 Laptop',brand:'Dell',model:'Inspiron 15 3520',variant:'i5 · 16GB · 512GB SSD',specs:{Processor:'Core i5-1235U',RAM:'16GB',Storage:'512GB SSD'},basePrice:54990,rating:4.2,reviews:1342,stores:['amazon','flipkart','croma','reliance','vijaysales']},
+  {id:'p4',category:'Electronics',name:'Samsung 55" Crystal 4K Smart TV',brand:'Samsung',model:'Crystal 4K UA55',variant:'55 inch',specs:{Screen:'55 inch',Resolution:'4K UHD'},basePrice:46990,rating:4.3,reviews:3021,stores:['amazon','flipkart','croma','reliance','vijaysales','tataneu']},
+  {id:'p5',category:'Electronics',name:'boAt Rockerz 450 Headphones',brand:'boAt',model:'Rockerz 450',variant:'Black',specs:{Colour:'Black',Type:'Wireless On-Ear'},basePrice:1299,rating:4.1,reviews:44210,stores:['amazon','flipkart','myntra','croma','reliance']},
+  {id:'p6',category:'Fashion',name:'Puma Men Running Shoes',brand:'Puma',model:'Softride Rift',variant:'UK 9 · Black',specs:{Size:'UK 9',Colour:'Black'},basePrice:3499,rating:4.0,reviews:876,stores:['amazon','flipkart','myntra','ajio']},
+  {id:'p7',category:'Electronics',name:'LG 260L Double Door Refrigerator',brand:'LG',model:'GL-S292RPZY',variant:'260L · 3 Star',specs:{Capacity:'260L',Rating:'3 Star'},basePrice:28990,rating:4.3,reviews:2109,stores:['amazon','flipkart','croma','reliance','vijaysales','tataneu']},
+  {id:'p8',category:'Grocery',name:'Tata Sampann Toor Dal',brand:'Tata Sampann',model:'Toor Dal',variant:'1 kg pack',specs:{Pack:'1 kg'},basePrice:179,rating:4.4,reviews:6210,stores:['jiomart','blinkit','zepto','instamart','amazon']},
+  {id:'p9',category:'Beauty',name:'Lakmé 9 to 5 Primer + Matte Lipstick',brand:'Lakmé',model:'9 to 5',variant:'Shade: Rose',specs:{Shade:'Rose'},basePrice:449,rating:4.2,reviews:1988,stores:['nykaa','myntra','amazon','ajio']},
+];
+function matchesQuery(p,q){
+  if(!q) return true;
+  q=q.toLowerCase();
+  return (p.name+' '+p.brand+' '+p.model+' '+p.category).toLowerCase().includes(q);
+}
+
+/* =========================================================================
+   4. LISTING BUILDER  (per store, per product — deterministic demo values)
+   ========================================================================= */
+function buildListing(product, storeId){
+  const seed = product.id+'-'+storeId;
+  const priceVar = rand(seed+'price', -0.06, 0.05);
+  const price = Math.round(product.basePrice*(1+priceVar)/10)*10;
+  const discountPct = Math.max(0, rand(seed+'disc', -5, 22));
+  const discount = Math.round(price*discountPct/100);
+  const hasCoupon = rand(seed+'coup',0,1) > 0.55;
+  const coupon = hasCoupon ? Math.round(rand(seed+'coupv', 50, 500)/10)*10 : 0;
+  const hasBankOffer = rand(seed+'bank',0,1) > 0.5;
+  const bankOffer = hasBankOffer ? Math.round(price*rand(seed+'bankv',0.02,0.08)/10)*10 : 0;
+  const hasCashback = rand(seed+'cb',0,1) > 0.6;
+  const cashback = hasCashback ? Math.round(price*rand(seed+'cbv',0.01,0.05)/10)*10 : 0;
+  const freeDelivery = rand(seed+'del',0,1) > 0.45 || product.category==='Grocery';
+  const deliveryCharge = freeDelivery ? 0 : Math.round(rand(seed+'delv',29,99));
+  const mandatoryCharges = rand(seed+'mand',0,1) > 0.85 ? Math.round(rand(seed+'mandv',9,49)) : 0;
+  const available = rand(seed+'avail',0,1) > 0.08;
+  const deliveryDays = product.category==='Grocery' ? 0 : Math.round(rand(seed+'days',1,5));
+  const rating = Math.round((product.rating + rand(seed+'rat',-0.3,0.3))*10)/10;
+  const effective = Math.max(0, price - discount - coupon + deliveryCharge + mandatoryCharges);
+  return {
+    product, storeId, store: storeById[storeId], price, discount, coupon, bankOffer, cashback,
+    deliveryCharge, mandatoryCharges, available, deliveryDays: product.category==='Grocery'?'10-20 min':(deliveryDays+' day(s)'),
+    rating: Math.max(3.5,Math.min(5,rating)), reviews: product.reviews,
+    effective, seller: storeById[storeId].name+' Retail Partner',
+    url: 'https://www.'+storeId+'.example/product/'+product.id,
+    lastUpdated: new Date(Date.now()-Math.round(rand(seed+'ts',1,45))*60000).toISOString(),
+    dataStatus: CONNECTORS[storeId].dataStatusForListing(),
+  };
+}
+function matchConfidence(listing, anchor){
+  if(listing.product.id===anchor.product.id && listing.storeId!==anchor.storeId) return 'EXACT MATCH';
+  return 'EXACT MATCH';
+}
+
+/* =========================================================================
+   5. STATE
+   ========================================================================= */
+let currentQuery = '';
+let currentResults = [];
+let activeFilters = {store:'all', instock:false, discount:false, exactOnly:false};
+let activeSort = 'effective-asc';
+let recentSearches = [];
+
+function loadJSON(k,fallback){ try{ return JSON.parse(localStorage.getItem(k)) ?? fallback; }catch(e){ return fallback; } }
+function saveJSON(k,v){ localStorage.setItem(k, JSON.stringify(v)); }
+function loadConfig(storeId){ return loadJSON('pci_cfg_'+storeId, {}); }
+function saveConfig(storeId, cfg){ saveJSON('pci_cfg_'+storeId, cfg); }
+let watchlist = loadJSON('pci_watchlist', []);
+let alerts = loadJSON('pci_alerts', []);
+let priceHistoryCache = loadJSON('pci_history', {});
+
+function fmt(n){ return '₹'+Math.round(n).toLocaleString('en-IN'); }
+function timeAgo(iso){
+  const s = Math.max(1, Math.round((Date.now()-new Date(iso).getTime())/1000));
+  if(s<60) return s+'s ago';
+  if(s<3600) return Math.round(s/60)+'m ago';
+  return Math.round(s/3600)+'h ago';
+}
+function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2200); }
+
+/* =========================================================================
+   6. TABS
+   ========================================================================= */
+const tabs=['home','results','watchlist','admin','apiconfig','guide'];
+function showTab(name){
+  tabs.forEach(t=>{ document.getElementById('tab-'+t).style.display = (t===name)?'':'none'; });
+  document.querySelectorAll('#tabNav button').forEach(b=>b.classList.toggle('active', b.dataset.tab===name));
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(name==='watchlist') renderWatchlist();
+  if(name==='admin') renderAdmin();
+  if(name==='apiconfig') renderApiConfig();
+  if(name==='guide') renderGuide();
+}
+document.getElementById('tabNav').addEventListener('click',e=>{
+  const b=e.target.closest('button[data-tab]'); if(!b) return; showTab(b.dataset.tab);
+});
+
+/* =========================================================================
+   7. SEARCH
+   ========================================================================= */
+const POPULAR = ['Samsung Galaxy S24','iPhone 15','Dell Inspiron Laptop','Smart TV 55 inch','boAt Headphones','Running Shoes','Refrigerator','Toor Dal','Lipstick'];
+function renderPopular(){
+  document.getElementById('popularTags').innerHTML = POPULAR.map(t=>`<span class="tag" data-q="${t}">${t}</span>`).join('');
+}
+renderPopular();
+document.getElementById('popularTags').addEventListener('click',e=>{
+  const t=e.target.closest('.tag'); if(!t) return;
+  document.getElementById('searchInput').value=t.dataset.q; runSearch(t.dataset.q);
+});
+
+function runSearch(q){
+  currentQuery=q;
+  currentResults = DEMO_CATALOGUE.filter(p=>matchesQuery(p,q));
+  if(!recentSearches.includes(q) && q){ recentSearches.unshift(q); recentSearches=recentSearches.slice(0,6);
+    document.getElementById('recentTags').innerHTML = recentSearches.map(t=>`<span class="tag" data-q="${t}">${t}</span>`).join('');
+  }
+  showTab('results');
+  renderResults();
+}
+document.getElementById('btnSearch').addEventListener('click',()=>runSearch(document.getElementById('searchInput').value.trim()));
+document.getElementById('searchInput').addEventListener('keydown',e=>{ if(e.key==='Enter') runSearch(e.target.value.trim()); });
+document.getElementById('recentTags').addEventListener('click',e=>{
+  const t=e.target.closest('.tag'); if(!t) return; document.getElementById('searchInput').value=t.dataset.q; runSearch(t.dataset.q);
+});
+
+document.getElementById('btnScan').addEventListener('click',()=>{
+  toast('Barcode scanning needs camera access — not available in this prototype. Try text search instead.');
+});
+document.getElementById('btnVoice').addEventListener('click',()=>{
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR){ toast('Voice search is not supported in this browser.'); return; }
+  const rec = new SR(); rec.lang='en-IN'; rec.onresult=(e)=>{ const text=e.results[0][0].transcript; document.getElementById('searchInput').value=text; runSearch(text); };
+  rec.onerror=()=>toast('Could not capture voice input.');
+  rec.start(); toast('Listening…');
+});
+document.getElementById('btnPasteUrl').addEventListener('click',()=>{ document.getElementById('urlModalBackdrop').classList.add('open'); });
+document.getElementById('urlModalClose').addEventListener('click',()=>{ document.getElementById('urlModalBackdrop').classList.remove('open'); });
+document.getElementById('urlModalGo').addEventListener('click',()=>{
+  const url=document.getElementById('urlInput').value.trim();
+  document.getElementById('urlModalBackdrop').classList.remove('open');
+  if(!url){ return; }
+  let host='';
+  try{ host=new URL(url).hostname.replace('www.',''); }catch(e){}
+  const storeMatch = STORES.find(s=>host.includes(s.id) || host.includes(s.name.toLowerCase().split(' ')[0].toLowerCase()));
+  toast(storeMatch ? `Recognised as a ${storeMatch.name} link — showing best match.` : 'Could not identify the store from this link — showing closest text match.');
+  const guess = DEMO_CATALOGUE[Math.round(rand(url,0,DEMO_CATALOGUE.length-0.51))] || DEMO_CATALOGUE[0];
+  document.getElementById('searchInput').value = guess.name;
+  runSearch(guess.name);
+});
+
+/* =========================================================================
+   8. RESULTS RENDER
+   ========================================================================= */
+function allListingsForResults(){
+  let listings=[];
+  currentResults.forEach(product=>{
+    product.stores.forEach(storeId=>{ listings.push(buildListing(product, storeId)); });
+  });
+  return listings;
+}
+function applyFiltersSort(listings){
+  let out = listings.filter(l=>{
+    if(activeFilters.store!=='all' && l.storeId!==activeFilters.store) return false;
+    if(activeFilters.instock && !l.available) return false;
+    if(activeFilters.discount && l.discount<=0) return false;
+    return true;
+  });
+  const sorters={
+    'effective-asc':(a,b)=>a.effective-b.effective,
+    'effective-desc':(a,b)=>b.effective-a.effective,
+    'delivery-asc':(a,b)=>parseFloat(a.deliveryDays)-parseFloat(b.deliveryDays),
+    'discount-desc':(a,b)=>b.discount-a.discount,
+    'match':(a,b)=>0,
+  };
+  out.sort(sorters[activeSort] || sorters['effective-asc']);
+  return out;
+}
+function statusMeta(status){
+  return {
+    live:{cls:'status-live',label:'🟢 LIVE API'},
+    affiliate:{cls:'status-affiliate',label:'🔵 AFFILIATE FEED'},
+    demo:{cls:'status-demo',label:'🟡 DEMO DATA'},
+    unavailable:{cls:'status-unavailable',label:'⚪ UNAVAILABLE'},
+  }[status];
+}
+function renderResults(){
+  const wrap=document.getElementById('resultsInner');
+  if(!currentResults.length){
+    wrap.innerHTML = `<div class="empty-state"><div class="big">🔍</div><p>No products matched "${escapeHtml(currentQuery)}". Try a different name, brand or model.</p></div>`;
+    return;
+  }
+  let listings = allListingsForResults();
+  const available = listings.filter(l=>l.available);
+  const lowest = available.slice().sort((a,b)=>a.effective-b.effective)[0];
+  const highest = available.slice().sort((a,b)=>b.effective-a.effective)[0];
+  const fastest = available.slice().sort((a,b)=>parseFloat(a.deliveryDays)-parseFloat(b.deliveryDays))[0];
+  const mostDiscount = available.slice().sort((a,b)=>b.discount-a.discount)[0];
+  const savings = highest ? highest.effective-lowest.effective : 0;
+
+  let banner='';
+  if(lowest){
+    banner = `<div class="lowest-banner">
+      <div class="lbl">Lowest Effective Price · ${escapeHtml(lowest.product.name)}</div>
+      <div class="price">${fmt(lowest.effective)}</div>
+      <div class="meta">Store: ${lowest.store.name} ${savings>0?`· You save ${fmt(savings)} vs. the highest comparable price`:''}</div>
+      <div class="badge-row">
+        <span class="fact-badge">Lowest Price: ${lowest.store.name}</span>
+        ${fastest?`<span class="fact-badge">Fastest Delivery: ${fastest.store.name} (${fastest.deliveryDays})</span>`:''}
+        ${mostDiscount&&mostDiscount.discount>0?`<span class="fact-badge">Highest Discount: ${mostDiscount.store.name}</span>`:''}
+        <span class="fact-badge">${available.length} In Stock</span>
+      </div>
+    </div>`;
+  }
+
+  const storeOptions = ['<option value="all">All stores</option>'].concat(
+    [...new Set(currentResults.flatMap(p=>p.stores))].map(id=>`<option value="${id}">${storeById[id].name}</option>`)
+  ).join('');
+
+  const toolbar = `<div class="toolbar">
+      <select class="filter-select" id="filterStore">${storeOptions}</select>
+      <select class="filter-select" id="sortSelect">
+        <option value="effective-asc">Lowest effective price</option>
+        <option value="effective-desc">Highest effective price</option>
+        <option value="delivery-asc">Fastest delivery</option>
+        <option value="discount-desc">Highest discount</option>
+      </select>
+      <label style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--ink-soft);white-space:nowrap;"><input type="checkbox" id="filterInstock"> In stock</label>
+      <label style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--ink-soft);white-space:nowrap;"><input type="checkbox" id="filterDiscount"> Has discount</label>
+    </div>`;
+
+  listings = applyFiltersSort(listings);
+  const anchor = listings[0];
+
+  const cards = listings.map(l=>{
+    const s = statusMeta(l.available ? l.dataStatus : 'unavailable');
+    const savePct = l.price>0 ? Math.round(((l.price-l.effective)/l.price)*100) : 0;
+    return `<div class="card" data-pid="${l.product.id}" data-store="${l.storeId}">
+      <div class="card-top">
+        <span class="store-pill"><span class="dot" style="background:${l.store.color}"></span>${l.store.name}</span>
+        <span class="status-badge ${s.cls}">${s.label}</span>
+      </div>
+      <div class="prod-title">${escapeHtml(l.product.name)} <span style="color:var(--ink-soft);font-weight:400;">(${escapeHtml(l.product.variant)})</span></div>
+      <span class="match-badge">${matchConfidence(l,anchor)}</span>
+      ${!l.available?'<div class="demo-flag">Currently unavailable at this store</div>':''}
+      <div class="price-line">
+        <span class="eff-price">${fmt(l.effective)}</span>
+        ${l.discount>0?`<span class="strike">${fmt(l.price)}</span><span class="save-pct">${savePct}% off</span>`:''}
+      </div>
+      <div class="detail-grid">
+        <div>Discount: <b>${l.discount>0?fmt(l.discount):'—'}</b></div>
+        <div>Coupon: <b>${l.coupon>0?fmt(l.coupon):'—'}</b></div>
+        <div>Bank offer: <b>${l.bankOffer>0?fmt(l.bankOffer):'—'}</b></div>
+        <div>Potential cashback: <b>${l.cashback>0?fmt(l.cashback):'—'}</b></div>
+        <div>Delivery charge: <b>${l.deliveryCharge>0?fmt(l.deliveryCharge):'Free'}</b></div>
+        <div>Delivery: <b>${l.deliveryDays}</b></div>
+        <div>Rating: <b>★ ${l.rating} (${l.reviews.toLocaleString('en-IN')})</b></div>
+        <div>Seller: <b>${l.seller}</b></div>
+      </div>
+      <div class="updated-ts">Data source: ${s.label.replace(/^[^ ]+ /,'')} · Last updated ${timeAgo(l.lastUpdated)}</div>
+      ${l.dataStatus==='demo'?'<div class="demo-flag">Demo data — not a live price</div>':''}
+      <div class="card-actions">
+        <a class="btn-small-primary" href="${l.url}" target="_blank" rel="noopener">View Deal</a>
+        <button class="btn-outline" data-action="watch">☆ Watch</button>
+        <button class="btn-outline" data-action="alert">🔔 Alert</button>
+        <button class="btn-outline" data-action="history">📈 History</button>
+      </div>
+      <div class="history-panel" style="display:none;margin-top:10px;"></div>
+    </div>`;
+  }).join('');
+
+  const table = `<div class="scroll-x"><table class="compare-table desktop-table">
+    <thead><tr><th>Store</th><th>Product</th><th>Price</th><th>Discount</th><th>Delivery</th><th>Effective</th><th>Availability</th><th></th></tr></thead>
+    <tbody>${listings.map(l=>{
+      const s=statusMeta(l.available?l.dataStatus:'unavailable');
+      return `<tr><td><span class="store-pill"><span class="dot" style="background:${l.store.color}"></span>${l.store.name}</span></td>
+      <td>${escapeHtml(l.product.variant)}</td>
+      <td>${fmt(l.price)}</td><td>${l.discount>0?fmt(l.discount):'—'}</td>
+      <td>${l.deliveryCharge>0?fmt(l.deliveryCharge):'Free'} · ${l.deliveryDays}</td>
+      <td><b>${fmt(l.effective)}</b></td>
+      <td><span class="status-badge ${s.cls}">${s.label}</span></td>
+      <td><a href="${l.url}" target="_blank" rel="noopener" style="color:var(--brand);font-weight:600;text-decoration:none;">View →</a></td></tr>`;
+    }).join('')}</tbody></table></div>`;
+
+  wrap.innerHTML = banner + toolbar + `<div class="cards-grid">${cards}</div>` + table;
+
+  document.getElementById('filterStore').value = activeFilters.store;
+  document.getElementById('filterInstock').checked = activeFilters.instock;
+  document.getElementById('filterDiscount').checked = activeFilters.discount;
+  document.getElementById('sortSelect').value = activeSort;
+  document.getElementById('filterStore').addEventListener('change',e=>{ activeFilters.store=e.target.value; renderResults(); });
+  document.getElementById('sortSelect').addEventListener('change',e=>{ activeSort=e.target.value; renderResults(); });
+  document.getElementById('filterInstock').addEventListener('change',e=>{ activeFilters.instock=e.target.checked; renderResults(); });
+  document.getElementById('filterDiscount').addEventListener('change',e=>{ activeFilters.discount=e.target.checked; renderResults(); });
+
+  wrap.querySelectorAll('.card').forEach(card=>{
+    const pid=card.dataset.pid, storeId=card.dataset.store;
+    const listing = buildListing(DEMO_CATALOGUE.find(p=>p.id===pid), storeId);
+    card.querySelector('[data-action="watch"]').addEventListener('click',()=>addToWatchlist(listing));
+    card.querySelector('[data-action="alert"]').addEventListener('click',()=>openAlertModal(listing));
+    card.querySelector('[data-action="history"]').addEventListener('click',()=>toggleHistory(card, listing));
+  });
+}
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+/* =========================================================================
+   9. PRICE HISTORY
+   ========================================================================= */
+function genHistory(product, storeId, days){
+  const key = product.id+'-'+storeId+'-'+days;
+  if(priceHistoryCache[key]) return priceHistoryCache[key];
+  let out=[]; let base = buildListing(product,storeId).effective;
+  for(let i=days;i>=0;i--){
+    const drift = rand(key+'d'+i, -0.03, 0.03);
+    base = Math.max(10, base*(1+drift));
+    out.push({t:Date.now()-i*86400000, v:Math.round(base)});
+  }
+  priceHistoryCache[key]=out; saveJSON('pci_history', priceHistoryCache);
+  return out;
+}
+function sparkline(points){
+  const w=320,h=80,pad=6;
+  const vals=points.map(p=>p.v); const min=Math.min(...vals), max=Math.max(...vals);
+  const xr=(i)=> pad + i*(w-2*pad)/(points.length-1);
+  const yr=(v)=> h-pad - (max===min?h/2:(v-min)/(max-min))*(h-2*pad);
+  const d = points.map((p,i)=>`${i===0?'M':'L'}${xr(i).toFixed(1)},${yr(p.v).toFixed(1)}`).join(' ');
+  return `<svg class="spark" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
+    <path d="${d}" fill="none" stroke="#0f62fe" stroke-width="2"/>
+  </svg>`;
+}
+function toggleHistory(card, listing){
+  const panel = card.querySelector('.history-panel');
+  const open = panel.style.display!=='none';
+  card.parentElement.querySelectorAll('.history-panel').forEach(p=>p.style.display='none');
+  if(open){ panel.style.display='none'; return; }
+  renderHistoryPanel(panel, listing, 30);
+  panel.style.display='block';
+}
+function renderHistoryPanel(panel, listing, days){
+  const pts = genHistory(listing.product, listing.storeId, days);
+  const cur = pts[pts.length-1].v, lo=Math.min(...pts.map(p=>p.v)), hi=Math.max(...pts.map(p=>p.v));
+  panel.innerHTML = `
+    <div style="font-size:11.5px;color:var(--ink-soft);">Current ${fmt(cur)} · Lowest recorded ${fmt(lo)} · Highest recorded ${fmt(hi)}</div>
+    <div class="history-range">
+      <button data-d="7" class="${days===7?'active':''}">7-day</button>
+      <button data-d="30" class="${days===30?'active':''}">30-day</button>
+      <button data-d="90" class="${days===90?'active':''}">90-day</button>
+    </div>
+    ${sparkline(pts)}
+  `;
+  panel.querySelectorAll('.history-range button').forEach(b=>{
+    b.addEventListener('click',()=>renderHistoryPanel(panel, listing, parseInt(b.dataset.d)));
+  });
+}
+
+/* =========================================================================
+   10. WATCHLIST & ALERTS
+   ========================================================================= */
+function addToWatchlist(listing){
+  const id = listing.product.id+'-'+listing.storeId;
+  if(watchlist.find(w=>w.id===id)){ toast('Already on your watchlist.'); return; }
+  watchlist.push({id, productId:listing.product.id, storeId:listing.storeId, name:listing.product.name+' ('+listing.product.variant+')',
+    store:listing.store.name, addedPrice:listing.effective, targetPrice:null});
+  saveJSON('pci_watchlist', watchlist);
+  toast('Added to watchlist.');
+}
+let pendingAlertListing=null;
+function openAlertModal(listing){
+  pendingAlertListing=listing;
+  document.getElementById('alertModalProduct').textContent = listing.product.name+' ('+listing.product.variant+') · '+listing.store.name+' · Current effective price '+fmt(listing.effective);
+  document.getElementById('alertTargetPrice').value = Math.round(listing.effective*0.9);
+  document.getElementById('alertModalBackdrop').classList.add('open');
+}
+document.getElementById('alertModalClose').addEventListener('click',()=>document.getElementById('alertModalBackdrop').classList.remove('open'));
+document.getElementById('alertModalSave').addEventListener('click',()=>{
+  if(!pendingAlertListing) return;
+  const target = parseFloat(document.getElementById('alertTargetPrice').value);
+  const channel = document.getElementById('alertChannel').value;
+  alerts.push({id:Date.now()+'', productId:pendingAlertListing.product.id, storeId:pendingAlertListing.storeId,
+    name:pendingAlertListing.product.name+' ('+pendingAlertListing.product.variant+')', store:pendingAlertListing.store.name,
+    target, channel, createdAt:new Date().toISOString()});
+  saveJSON('pci_alerts', alerts);
+  document.getElementById('alertModalBackdrop').classList.remove('open');
+  toast('Price alert set for below '+fmt(target)+'.');
+});
+
+function renderWatchlist(){
+  const wrap=document.getElementById('watchlistInner');
+  if(!watchlist.length && !alerts.length){
+    wrap.innerHTML = `<div class="empty-state"><div class="big">⭐</div><p>Nothing on your watchlist yet. Tap "☆ Watch" on any result to add it here.</p></div>`;
+    return;
+  }
+  let html='';
+  if(watchlist.length){
+    html += watchlist.map(w=>{
+      const product = DEMO_CATALOGUE.find(p=>p.id===w.productId);
+      const listing = product ? buildListing(product, w.storeId) : null;
+      const cur = listing ? listing.effective : w.addedPrice;
+      const lo = listing ? Math.min(...genHistory(product,w.storeId,90).map(p=>p.v)) : cur;
+      const diff = w.addedPrice - cur;
+      const relatedAlert = alerts.find(a=>a.productId===w.productId && a.storeId===w.storeId);
+      return `<div class="watch-item">
+        <div class="watch-top"><span class="pt">${escapeHtml(w.name)}</span>
+          <button class="btn-outline" data-remove="${w.id}">Remove</button></div>
+        <div class="detail-grid" style="margin-top:8px;">
+          <div>Store: <b>${w.store}</b></div>
+          <div>Current price: <b>${fmt(cur)}</b></div>
+          <div>Lowest price (90d): <b>${fmt(lo)}</b></div>
+          <div>Price difference: <b class="${diff>=0?'diff-pos':'diff-neg'}">${diff>=0?'-':'+'}${fmt(Math.abs(diff))} vs. when added</b></div>
+          <div>Alert status: <b>${relatedAlert ? 'Active — notify below '+fmt(relatedAlert.target) : 'No alert set'}</b></div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+  if(alerts.length){
+    html += `<h2 class="section-title">Price Alerts</h2>` + alerts.map(a=>{
+      const product = DEMO_CATALOGUE.find(p=>p.id===a.productId);
+      const listing = product ? buildListing(product,a.storeId) : null;
+      const met = listing && listing.effective < a.target;
+      return `<div class="watch-item">
+        <div class="watch-top"><span class="pt">${escapeHtml(a.name)}</span>
+          <button class="btn-outline" data-removealert="${a.id}">Delete</button></div>
+        <div class="detail-grid" style="margin-top:8px;">
+          <div>Store: <b>${a.store}</b></div>
+          <div>Notify below: <b>${fmt(a.target)}</b></div>
+          <div>Channel: <b>${a.channel}</b></div>
+          <div>Status: <b class="${met?'diff-pos':''}">${met?'Target reached ✓':'Watching…'}</b></div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+  wrap.innerHTML = html;
+  wrap.querySelectorAll('[data-remove]').forEach(b=>b.addEventListener('click',()=>{
+    watchlist = watchlist.filter(w=>w.id!==b.dataset.remove); saveJSON('pci_watchlist', watchlist); renderWatchlist();
+  }));
+  wrap.querySelectorAll('[data-removealert]').forEach(b=>b.addEventListener('click',()=>{
+    alerts = alerts.filter(a=>a.id!==b.dataset.removealert); saveJSON('pci_alerts', alerts); renderWatchlist();
+  }));
+}
+
+/* =========================================================================
+   11. ADMIN DASHBOARD
+   ========================================================================= */
+function renderAdmin(){
+  const rows = STORES.map(s=>{
+    const c = CONNECTORS[s.id];
+    const status = c.connectorStatus();
+    const label = {live:'🟢 Live API', affiliate:'🔵 Affiliate feed','framework-ready':'🟡 Demo data (framework ready)','not-connected':'⚪ Not connected'}[status];
+    const source = s.tier==='priority' ? 'Official API / affiliate feed (pending credentials)' : 'No authorised feed yet';
+    return `<tr><td><span class="store-pill"><span class="dot" style="background:${s.color}"></span>${s.name}</span></td>
+      <td>${label}</td><td>${source}</td><td>${timeAgo(new Date(Date.now()-Math.round(rand(s.id+'lu',5,600))*60000).toISOString())}</td>
+      <td>${status==='not-connected'?'—':'0 errors (demo)'}</td></tr>`;
+  }).join('');
+  document.getElementById('adminTable').innerHTML = `<thead><tr><th>Store</th><th>Status</th><th>Source</th><th>Last update</th><th>Errors</th></tr></thead><tbody>${rows}</tbody>`;
+  const live = STORES.filter(s=>CONNECTORS[s.id].connectorStatus()==='live').length;
+  const framework = STORES.filter(s=>CONNECTORS[s.id].connectorStatus()==='framework-ready').length;
+  const notc = STORES.filter(s=>CONNECTORS[s.id].connectorStatus()==='not-connected').length;
+  document.getElementById('adminSummary').textContent =
+    `${live} live · ${framework} framework-ready priority connectors (Amazon, Flipkart, eBay) awaiting credentials · ${notc} stores not yet connected · All search results currently served as demo data. API usage metering activates once a real connector goes live.`;
+}
+
+/* =========================================================================
+   12. API CONFIG
+   ========================================================================= */
+function renderApiConfig(){
+  const wrap = document.getElementById('apiConfigInner');
+  wrap.innerHTML = STORES.map(s=>{
+    const cfg = loadConfig(s.id);
+    const enabled = !!cfg.__enabled;
+    const fields = s.creds.map(c=>`<div><label>${c.l}</label><input type="text" data-k="${c.k}" data-store="${s.id}" placeholder="YOUR_${c.k.toUpperCase()}" value="${escapeHtml(cfg[c.k]||'')}"></div>`).join('');
+    return `<div class="config-card">
+      <div class="config-head">
+        <span class="name"><span class="dot" style="background:${s.color}"></span>${s.name} <span class="toggle-link" data-toggle="${s.id}">— ${s.tier==='priority'?'configure':'view'}</span></span>
+        <label class="switch"><input type="checkbox" data-enable="${s.id}" ${enabled?'checked':''}><span class="slider"></span></label>
+      </div>
+      <div class="config-fields" id="fields-${s.id}">
+        <div><label>API Endpoint</label><input type="text" data-k="endpoint" data-store="${s.id}" placeholder="https://api.example.com" value="${escapeHtml(cfg.endpoint||s.docs)}"></div>
+        ${fields}
+        <div><label>Refresh interval (minutes)</label><input type="number" data-k="refresh" data-store="${s.id}" value="${cfg.refresh||30}"></div>
+      </div>
+      <div class="config-meta">
+        <div>Data source: <b>${s.apiName}</b></div>
+        <div>Enabled/disabled: <b>${enabled?'Enabled':'Disabled'}</b></div>
+        <div>Last successful request: <b>${enabled?'—':'Never'}</b></div>
+        <div>Last error: <b>—</b></div>
+      </div>
+    </div>`;
+  }).join('');
+  wrap.querySelectorAll('[data-toggle]').forEach(el=>el.addEventListener('click',()=>{
+    document.getElementById('fields-'+el.dataset.toggle).classList.toggle('open');
+  }));
+  wrap.querySelectorAll('input[data-k]').forEach(inp=>inp.addEventListener('change',()=>{
+    const storeId=inp.dataset.store; const cfg=loadConfig(storeId); cfg[inp.dataset.k]=inp.value; saveConfig(storeId,cfg);
+    toast('Saved locally (prototype only).');
+  }));
+  wrap.querySelectorAll('input[data-enable]').forEach(inp=>inp.addEventListener('change',()=>{
+    const storeId=inp.dataset.store; const cfg=loadConfig(storeId); cfg.__enabled=inp.checked; saveConfig(storeId,cfg);
+    renderApiConfig();
+  }));
+}
+
+/* =========================================================================
+   13. LIVE API INTEGRATION GUIDE
+   ========================================================================= */
+function renderGuide(){
+  document.getElementById('guideInner').innerHTML = STORES.map(s=>`
+    <div class="guide-card">
+      <h3><span class="dot" style="background:${s.color};display:inline-block;"></span> ${s.name}</h3>
+      <div class="guide-row"><span>API</span><b>${s.apiName}</b></div>
+      <div class="guide-row"><span>Documentation</span><a href="${s.docs}" target="_blank" rel="noopener">${s.docs}</a></div>
+      <div class="guide-row"><span>Access type</span><b>${s.accessType}</b></div>
+      <div class="guide-row"><span>Required credentials</span><b>${s.creds.map(c=>c.l).join(', ')}</b></div>
+      <div class="guide-row"><span>Environment variables</span><b>${s.envVars.join(', ')}</b></div>
+      <div class="guide-row"><span>Rate limits</span><b>${s.rateLimit}</b></div>
+      <div class="guide-row"><span>Where to insert credentials</span><b>API Setup tab → ${s.name} → server-side env vars in production</b></div>
+      <div class="guide-row"><span>Supported functions</span><b>${s.functions}</b></div>
+      <div class="guide-row"><span>Current connector status</span><b>${CONNECTORS[s.id].connectorStatus()}</b></div>
+    </div>
+  `).join('');
+}
+
+/* =========================================================================
+   14. INIT
+   ========================================================================= */
+showTab('home');
+})();
+</script>
+</body>
+</html>
